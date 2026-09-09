@@ -14,7 +14,7 @@ Server::Server(int port, std::string pass)
 void Server::start()
 {
     // Creating socket
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(PF_INET, SOCK_STREAM, 0);
     
     if(server_fd < 0) //If it fails
     {
