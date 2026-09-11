@@ -119,7 +119,56 @@ void Server::start()
                 }
 
                 buffer[bytes] = 0;
-                std::cout << "Received from: " << fds[i].fd << ": " << buffer;
+                std::string rawData(buffer, bytes);
+
+                // Founds the client
+                Client *client = getClientByFd(fds[i].fd);
+                if(!client)
+                    continue;
+
+                client->appendToBuffer(rawData);
+
+                std::string &buf = const_cast<std::string&>(client->getBuffer());
+                size_t pos;
+
+                while((pos = buf.find("\r\n")) != std::string::npos)
+                {
+                    std::string line = buf.substr(0, pos);
+                    buf.erase(0, pos + 2);
+                    
+                    IrcMessage msg = IrcParser::parse(line);
+
+                    if (msg.command == "PASS")
+                        handlePass(msg, client);
+                    else if (msg.command == "NICK")
+                        handleNick(msg, client);
+                    else if (msg.command == "USER")
+                        handleUser(msg, client);
+                    else if (msg.command == "JOIN")
+                        handleJoin(msg, client);
+                    else if (msg.command == "PRIVMSG")
+                        handlePrivmsg(msg, client);
+                    else if (msg.command == "KICK")
+                        handleKick(msg, client);
+                    else if (msg.command == "INVITE")
+                        handleInvite(msg, client);
+                    else if (msg.command == "TOPIC")
+                        handleTopic(msg, client);
+                    else if (msg.command == "MODE")
+                        handleMode(msg, client);
+                    else if (!msg.command.empty())
+                        client->sendError("421", msg.command + " :Unknown command");
+                }
+            }
+        }
+
+        for (size_t i = 1; i < fds.size(); i++) {
+            Client* client = getClientByFd(fds[i].fd);
+            if (client && client->shouldDelete()) {
+                close(fds[i].fd);
+                fds.erase(fds.begin() + i);
+                removeClient(client);
+                i--;
             }
         }
     }
@@ -132,6 +181,63 @@ void Server::stop()
     running = false;
     std::cout << "Server stopping...\n";
 }
+
+Client *Server::getClientByFd(int fd)
+{
+    for(size_t i = 0; i < clients.size(); i++)
+    {
+        if(clients[i]->getFD() == fd)
+            return clients[i];
+    }
+    return NULL;
+}
+
+Client *Server::getClientByNick(std::string &nick)
+{
+    for(size_t i = 0; i < clients.size(); i++)
+    {
+        if(clients[i]->getNickname() == nick)
+            return clients[i];
+    }
+
+    return NULL;
+}
+
+void Server::removeClient(Client *client)
+{
+    for(size_t i = 0; i < clients.size(); i++)
+    {
+        if(clients[i] == client)
+        {
+            clients.erase(clients.begin() + i);
+            break;
+        }
+    }
+
+    // TO DO: Remove from all channels
+
+
+    delete client;
+}
+
+void Server::handlePass(IrcMessage &msg,Client *client)
+{}
+void Server::handleNick(IrcMessage &msg,Client *client)
+{}
+void Server::handleUser(IrcMessage &msg,Client *client)
+{}
+void Server::handleJoin(IrcMessage &msg,Client *client)
+{}
+void Server::handlePrivmsg(IrcMessage &msg,Client *client)
+{}
+void Server::handleKick(IrcMessage &msg,Client *client)
+{}
+void Server::handleInvite(IrcMessage &msg,Client *client)
+{}
+void Server::handleTopic(IrcMessage &msg,Client *client)
+{}
+void Server::handleMode(IrcMessage &msg,Client *client)
+{}
 
 Server::~Server()
 {
