@@ -220,23 +220,248 @@ void Server::removeClient(Client *client)
     delete client;
 }
 
-void Server::handlePass(IrcMessage &msg,Client *client)
+Channel* Server::getChannel(const std::string& name)
+{
+    for(size_t i = 0; i < channels.size(); ++i)
+    {
+        if(channels[i]->getName() == name)
+            return channels[i];
+    }
+    return NULL;
+}
+
+Channel* Server::createChannel(const std::string& name)
+{
+    Channel *existing = getChannel(name);
+    if(existing)
+        return existing;
+
+    Channel *channel = new Channel(name);
+    channels.push_back(channel);
+    return channel;
+}
+
+bool Server::isNickTaken(const std::string& nick, Client* exclude = NULL) const
+{
+    for (size_t i = 0; i < clients.size(); i++) {
+        if (clients[i] == exclude)
+            continue;
+        
+        if (clients[i]->getNickname() == nick)
+            return true;
+    }
+    return false;
+}
+
+void Server::handlePass(const IrcMessage &msg,Client *client)
+{
+    if(client->isRegistered())
+    {
+        client->sendError("462", ":You may not reregister");
+        return;
+    }
+
+    if(msg.params.empty())
+    {
+        client->sendError("461", "PASS :Not enough parameters");
+        return;
+    }
+
+    if(msg.params[0] != pass)
+    {
+        client->sendError("464", ":Password incorrect");
+        client->markForDeletion();
+        return;
+    }
+
+    client->setPassword(msg.params[0]);
+    client->setAuth(true);
+    client->tryRegister();
+}
+
+void Server::handleNick(const IrcMessage &msg,Client *client)
+{
+    if(msg.params.empty())
+    {
+        client->sendError("461", "NICK :Not enough parameters");
+        return;
+    }
+
+    std::string newNick = msg.params[0];
+    
+    if(isNickTaken(newNick, client))
+    {
+        client->sendError("433", newNick + ":Nickname is already used");
+        return;
+    }
+
+    std::string oldNick = client->getNickname();
+
+    client->setNickname(newNick);
+
+    if(!oldNick.empty())
+    {
+        std::vector<Channel *> clientChannel = client->getChannels();
+        for(size_t i = 0; i < clientChannel.size(); i++)
+        {
+            clientChannel[i]->broadcast(":" + oldNick + " NICK :" + newNick);
+        }
+    }
+
+    client->tryRegister();
+}
+
+void Server::handleUser(const IrcMessage &msg,Client *client)
+{
+    if(client->isRegistered())
+    {
+        client->sendError("462", ":You may not reregister");
+        return;
+    }
+
+    if(msg.params.size() < 4)
+    {
+        client->sendError("461", "USER :Not enough parameters");
+        return;
+    }
+
+    client->setUsername(msg.params[0]);
+    client->setRealname(msg.trailing);
+
+    client->tryRegister();
+}
+void Server::handleJoin(const IrcMessage &msg,Client *client)
+{
+    if(!client->isRegistered())
+    {
+        client->sendError("451", ":You have to register");
+        return;
+    }
+
+    if(msg.params.empty())
+    {
+        client->sendError("461", "JOIN :Not enough parameters");
+        return;
+    }
+
+    std::string channelName = msg.params[0];
+    std::string key = (msg.params.size() > 1) ? msg.params[1] : "";
+
+    Channel *channel = getChannel(channelName);
+    if(!channel)
+    {
+        channel = createChannel(channelName);
+    }
+
+    if(channel->hasClient(*client))
+    {
+        client->sendError("443", client->getNickname() + " " + channelName + ":is already on channel");
+        return;
+    }
+
+    if(channel->isInviteOnly() && !channel->isInvited(*client))
+    {
+        client->sendError("473", channelName + " :Cannot join channel (+i)");
+        return;
+    }
+
+    if(channel->hasKey() && key != channel->getKey())
+    {
+        client->sendError("475", channelName + " :Cannot join channel (+k)");
+        return;
+    }
+
+    if(channel->isFull())
+    {
+        client->sendError("471", channelName + " :Cannot join channel (+l)");
+        return;
+    }
+
+    if(channel->isBanned(*client))
+    {
+        client->sendError("474", channelName + " :Cannot join channel (+b)");
+        return;
+    }
+
+    channel->addClient(*client);
+    channel->sendTopic(*client);
+    channel->sendNames(*client);
+    client->sendReply("366", channelName + " :End of NAMES list");
+    channel->broadcast(":" + client->getPrefix() + " JOIN " + channelName, client);
+}
+
+void Server::handlePrivmsg(const IrcMessage &msg,Client *client)
+{
+    if(!client->isRegistered())
+    {
+        client->sendError("451", ":You have not registered");
+        return;
+    }
+
+    if(msg.params.empty() && msg.trailing.empty())
+    {
+        client->sendError("461", "PRIVMSG :Not enough parametes");
+        return;
+    }
+
+    std::string target = msg.params[0];
+    std::string message = msg.trailing;
+
+    if(target == "#")
+    {
+        Channel *channel = new Channel(target);
+        if(!channel)
+        {
+            client->sendError("401", target + " :No such nick/channel");
+            return;
+        }
+
+        if(!channel->hasClient(*client))
+        {
+            client->sendError("404", target + " :Cannot send to the channel");
+            return;
+        }
+
+        channel->broadcast(":" + client->getPrefix() + " PRIVMSG " + target + " :" + message, NULL);
+    }
+    else
+    {
+        Client *targetClient = getClientByNick(target);
+        if(!targetClient)
+        {
+            client->sendError("401", target + ":No such nick/channel");
+            return;
+        }
+
+        targetClient->send(":" + client->getPrefix() + " PRIVMSG " + target + " :" + message);
+    }
+}
+
+void Server::handleKick(const IrcMessage &msg,Client *client)
+{
+    if(!client->isRegistered())
+    {
+        client->sendError("451", ":You have not registered");
+        return;
+    }
+    if(msg.params.size() < 2)
+    {
+        client->sendError("461", "KICK :Not enough parametes");
+        return;
+    }
+    
+}
+
+void Server::handleInvite(const IrcMessage &msg,Client *client)
+{
+    
+}
+
+void Server::handleTopic(const IrcMessage &msg,Client *client)
 {}
-void Server::handleNick(IrcMessage &msg,Client *client)
+void Server::handleMode(const IrcMessage &msg,Client *client)
 {}
-void Server::handleUser(IrcMessage &msg,Client *client)
-{}
-void Server::handleJoin(IrcMessage &msg,Client *client)
-{}
-void Server::handlePrivmsg(IrcMessage &msg,Client *client)
-{}
-void Server::handleKick(IrcMessage &msg,Client *client)
-{}
-void Server::handleInvite(IrcMessage &msg,Client *client)
-{}
-void Server::handleTopic(IrcMessage &msg,Client *client)
-{}
-void Server::handleMode(IrcMessage &msg,Client *client)
+void Server::handleChannelMode(const IrcMessage &msg, Client *client, const std::string &channelName)
 {}
 
 Server::~Server()

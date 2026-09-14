@@ -1,7 +1,7 @@
 #ifndef __SERVER_HPP__
 #define __SERVER_HPP__
 
-//#include "../Channel/Channel.hpp" TO DO (important)
+#include "../Channel/Channel.hpp"
 #include "../Client/Client.hpp"
 #include "../IrcParser/IrcParser.hpp"
 #include <string>
@@ -19,16 +19,21 @@ class Server{
         Client *getClientByNick(std::string &nick);
         void removeClient(Client *client);
 
+        Channel* getChannel(const std::string& name);
+        Channel* createChannel(const std::string& name);
+        bool isNickTaken(const std::string& nick, Client* exclude = NULL) const;
+
         // TO DO
-        void handlePass(IrcMessage &msg,Client *client);
-        void handleNick(IrcMessage &msg,Client *client);
-        void handleUser(IrcMessage &msg,Client *client);
-        void handleJoin(IrcMessage &msg,Client *client);
-        void handlePrivmsg(IrcMessage &msg,Client *client);
-        void handleKick(IrcMessage &msg,Client *client);
-        void handleInvite(IrcMessage &msg,Client *client);
-        void handleTopic(IrcMessage &msg,Client *client);
-        void handleMode(IrcMessage &msg,Client *client);
+        void handlePass(const IrcMessage &msg, Client *client);
+        void handleNick(const IrcMessage &msg, Client *client);
+        void handleUser(const IrcMessage &msg, Client *client);
+        void handleJoin(const IrcMessage &msg, Client *client);
+        void handlePrivmsg(const IrcMessage &msg, Client *client);
+        void handleKick(const IrcMessage &msg, Client *client);
+        void handleInvite(const IrcMessage &msg, Client *client);
+        void handleTopic(const IrcMessage &msg, Client *client);
+        void handleMode(const IrcMessage &msg, Client *client);
+        void handleChannelMode(const IrcMessage &msg, Client *client, const std::string &channelName);
         
 
         ~Server();
