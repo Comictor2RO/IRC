@@ -1,5 +1,5 @@
 #include "Channel.hpp"
-#include "Client.hpp"
+#include "../Client/Client.hpp"
 #include <iostream>
 
 Channel::Channel(const std::string& name)
@@ -159,7 +159,7 @@ void Channel::sendTopic(Client& client) {
     if (!topic.empty())
         client.sendReply("332", name + " :" + topic);
     else
-        client.sendReply("331", name + ":No topic is set");
+        client.sendReply("331", name + " :No topic is set");
 }
 
 void Channel::sendNames(Client& client) {
@@ -171,5 +171,5 @@ void Channel::sendNames(Client& client) {
             names += "@";
         names += clients[i]->getNickname();
     }
-    client.sendReply("353", name + " :" + names);
+    client.sendReply("353", "= " + name + " :" + names);
 }

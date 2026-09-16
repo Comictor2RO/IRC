@@ -4,169 +4,57 @@
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <iostream>
+#include <cerrno>
+#include <cstring>
 
 class Channel;
 
 class Client{
     public:
         // Constructor
-        Client(int fd) : fd(fd), auth(false), registered(false), markDeletion(false)
-        {}
+        Client(int fd);
 
         // Getters
-        int getFD() const
-        {
-            return fd;
-        }
-
-        std::string getUsername() const
-        {
-            return username;
-        }
-
-        std::string getNickname() const
-        {
-            return nickname;
-        }
-
-        std::string getRealname() const
-        {
-            return realname;
-        }
-
-        std::string getPassword() const
-        {
-            return password;
-        }
-
-        std::string getPrefix() const
-        {
-            if(!nickname.empty())
-                return nickname + "!" + (username.empty() ? "*" : username) + "@localhost";
-            return ("*!*@localhost");
-        }
-
-        bool isAuth() const
-        {
-            return auth;
-        }
-
-        bool isRegistered() const
-        {
-            return registered;
-        }
-
-        const std::string &getBuffer() const
-        {
-            return buffer;
-        }
+        int getFD() const;
+        std::string getUsername() const;
+        std::string getNickname() const;
+        std::string getRealname() const;
+        std::string getPassword() const;
+        std::string getPrefix() const;
+        bool isAuth() const;
+        bool isRegistered() const;
+        const std::string &getBuffer() const;
 
         // Setters
-        void setUsername(const std::string &username)
-        {
-            this->username = username;
-        }
-
-        void setNickname(const std::string &nickname)
-        {
-            this->nickname = nickname;
-        }
-
-        void setRealname(const std::string &realname)
-        {
-            this->realname = realname;
-        }
-
-        void setPassword(const std::string &password)
-        {
-            this->password = password;
-        }
-
-        void setAuth(bool auth)
-        {
-            this->auth = auth;
-        }
+        void setUsername(const std::string &username);
+        void setNickname(const std::string &nickname);
+        void setRealname(const std::string &realname);
+        void setPassword(const std::string &password);
+        void setAuth(bool auth);
 
         // Buffer handling
-        void appendToBuffer(const std::string &data)
-        {
-            buffer = buffer + data;
-        }
-
-        void clearBuffer()
-        {
-            buffer.clear();
-        }
+        void appendToBuffer(const std::string &data);
+        void clearBuffer();
 
         // Sending methods
-        void send(const std::string &msg)
-        {
-            std::string fullmsg = msg + "\r\n";
-            ::send(fd, fullmsg.c_str(), fullmsg.size(), 0);
-        }
-    
-        void sendError(const std::string &code, const std::string &msg)
-        {
-            send(":" + std::string("localhost") + " " + code + " " + (nickname.empty() ? "*" : nickname) + " " + msg);
-        }
+        void send(const std::string &msg);
 
-        void sendReply(const std::string &code, const std::string &msg)
-        {
-            send(":" + std::string("localhost") + " " + code + " " + (nickname.empty() ? "*" : nickname) + " " + msg);
-        }
+        void sendError(const std::string &code, const std::string &msg);
+        void sendReply(const std::string &code, const std::string &msg);
 
         // Registration
-        void markForDeletion()
-        {
-            markDeletion = true;
-        }
-
-        bool shouldDelete() const
-        {
-            return markDeletion;
-        }
-
-        void tryRegister()
-        {
-            if(auth && !nickname.empty() && !username.empty() && !registered)
-            {
-                registered = true;
-
-                send("001 " + nickname + " :Welcome to the IRC Network");
-                send("002 " + nickname + " :Your host is localhost, running version 1.0");
-                send("003 " + nickname + " :This server was created today");
-                send("004 " + nickname + " localhost 1.0 itkol");
-            }
-        }
+        void markForDeletion();
+        bool shouldDelete() const;
+        void tryRegister();
 
         // Channels
-        void joinChannel(Channel *channel)
-        {
-            channels.push_back(channel);
-        }
-
-        void leaveChannel(Channel *channel)
-        {
-            for(size_t i = 0; i < channels.size(); ++i)
-            {
-                if(channels[i] == channel)
-                {
-                    channels.erase(channels.begin() + i);
-                    return;
-                }
-            }
-        }
-
-        std::vector<Channel *> getChannels() const
-        {
-            return channels;
-        }
+        void joinChannel(Channel *channel);
+        void leaveChannel(Channel *channel);
+        std::vector<Channel *> getChannels() const;
 
         // Destructor
-        ~Client()
-        {
-            close(fd);
-        }
+        ~Client();
 
     private:
         int fd;

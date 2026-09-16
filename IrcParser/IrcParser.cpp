@@ -1,4 +1,5 @@
 #include "IrcParser.hpp"
+#include <cctype>
 
 IrcMessage IrcParser::parse (const std::string &raw)
 {
@@ -26,8 +27,13 @@ IrcMessage IrcParser::parse (const std::string &raw)
     else
     {
         msg.command = raw.substr(pos);
+        for (size_t i = 0; i < msg.command.size(); ++i)
+            msg.command[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(msg.command[i])));
         return msg;
     }
+
+    for (size_t i = 0; i < msg.command.size(); ++i)
+        msg.command[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(msg.command[i])));
 
     // Extract params & trailing
     while(pos < raw.length())
