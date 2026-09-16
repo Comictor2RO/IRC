@@ -641,14 +641,13 @@ void Server::handleKick(const IrcMessage &msg, Client *client)
         return;
     }
     
-    std::cout << "DEBUG: Kicking client" << std::endl;
-    channel->removeClient(*targetClient);
-    
     std::string kickMsg = ":" + client->getPrefix() + " KICK " + channelName + " " + userNick;
     if (!reason.empty())
         kickMsg += " :" + reason;
     
+    std::cout << "DEBUG: Kicking client" << std::endl;
     channel->broadcast(kickMsg);
+    channel->removeClient(*targetClient);
 }
 
 
