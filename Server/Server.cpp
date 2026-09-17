@@ -439,7 +439,7 @@ void Server::handleJoin(const IrcMessage &msg, Client *client)
     }
 
     std::string channelName = msg.params[0];
-    if (channelName.empty() || channelName == "<none>")
+    if (channelName.size() < 2 || (channelName[0] != '#' && channelName[0] != '&'))
     {
         std::cout << "DEBUG: Invalid channel name" << std::endl;
         client->sendError("479", channelName + " :Illegal channel name");
