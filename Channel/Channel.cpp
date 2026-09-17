@@ -83,9 +83,13 @@ void Channel::addClient(Client& client) {
 void Channel::removeClient(Client& client) {
     for (size_t i = 0; i < clients.size(); i++) {
         if (clients[i] == &client) {
+            bool wasOperator = isOperator(client);
             clients.erase(clients.begin() + i);
             client.leaveChannel(this);
             removeOperator(client);
+
+            if (wasOperator && operators.empty() && !clients.empty())
+                addOperator(*clients[0]);
             break;
         }
     }

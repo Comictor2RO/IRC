@@ -6,7 +6,16 @@
 #include <unistd.h>
 #include <poll.h>
 #include <cstring>
+#include <cerrno>
+#include <signal.h>
 
+static volatile sig_atomic_t stopRequested = 0;
+
+static void handleSignal(int signalNumber)
+{
+    if (signalNumber == SIGINT)
+        stopRequested = 1;
+}
 
 Server::Server(int port, std::string pass)
     : port(port), pass(pass), server_fd(-1), running(false)
@@ -15,6 +24,9 @@ Server::Server(int port, std::string pass)
 
 void Server::start()
 {
+    signal(SIGINT, handleSignal);
+    stopRequested = 0;
+
     server_fd = socket(PF_INET, SOCK_STREAM, 0);
     
     if(server_fd < 0)
@@ -54,17 +66,19 @@ void Server::start()
     std::cout << "Server listening on port: " << port << '\n';
 
     std::vector<pollfd> fds;
-    pollfd pfd;
+    pollfd pfd = {};
     pfd.fd = server_fd;
     pfd.events = POLLIN;
     fds.push_back(pfd);
 
     running = true;
-    while(running)
+    while(running && !stopRequested)
     {
         int ret = poll(&fds[0], fds.size(), -1);
         if(ret < 0)
         {
+            if (errno == EINTR && stopRequested)
+                break;
             std::cout << "Error: poll failed.\n";
             break;
         }
@@ -84,7 +98,7 @@ void Server::start()
             int flag = fcntl(client_fd, F_GETFL, 0);
             fcntl(client_fd, F_SETFL, flag | O_NONBLOCK);
 
-            pollfd new_client;
+            pollfd new_client = {};
             new_client.fd = client_fd;
             new_client.events = POLLIN;
             fds.push_back(new_client);
@@ -876,18 +890,21 @@ void Server::handleChannelMode(const IrcMessage &msg, Client *client, const std:
                 if (paramIdx < msg.params.size())
                 {
                     Client* target = getClientByNick(msg.params[paramIdx++]);
-                    if (target && channel->hasClient(*target))
+                    if (!target || !channel->hasClient(*target))
                     {
-                        if (add)
-                        {
-                            std::cout << "DEBUG: Adding operator: " << target->getNickname() << std::endl;
-                            channel->addOperator(*target);
-                        }
-                        else
-                        {
-                            std::cout << "DEBUG: Removing operator: " << target->getNickname() << std::endl;
-                            channel->removeOperator(*target);
-                        }
+                        std::string targetName = target ? target->getNickname() : "unknown";
+                        client->sendError("441", targetName + " " + channelName + " :They aren't on that channel");
+                        return;
+                    }
+                    if (add)
+                    {
+                        std::cout << "DEBUG: Adding operator: " << target->getNickname() << std::endl;
+                        channel->addOperator(*target);
+                    }
+                    else
+                    {
+                        std::cout << "DEBUG: Removing operator: " << target->getNickname() << std::endl;
+                        channel->removeOperator(*target);
                     }
                 }
                 break;
@@ -919,6 +936,11 @@ void Server::handleQuit(const IrcMessage &msg, Client *client)
 
 Server::~Server()
 {
-    if(running)
-        stop();
+    while(!clients.empty())
+        removeClient(clients.back());
+
+    for(size_t i = 0; i < channels.size(); ++i)
+        delete channels[i];
+
+    channels.clear();
 }

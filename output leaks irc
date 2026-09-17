@@ -1,0 +1,149 @@
+==596665== Process terminating with default action of signal 2 (SIGINT)
+==596665==    at 0x4CC4CE7: poll (poll.c:29)
+==596665==    by 0x403C48: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== FILE DESCRIPTORS: 6 open (3 std) at exit.
+==596665== Open AF_INET socket 4: 127.0.0.1:1025 <-> 127.0.0.1:55456
+==596665==    at 0x4CD34B7: accept (accept.c:26)
+==596665==    by 0x403CE3: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== Open AF_INET socket 3: 0.0.0.0:1025 <-> unbound
+==596665==    at 0x4CD3BCB: socket (syscall-template.S:120)
+==596665==    by 0x403A1A: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== Open file descriptor 103: /usr/share/code/v8_context_snapshot.bin
+==596665==    <inherited from parent>
+==596665== 
+==596665== 
+==596665== HEAP SUMMARY:
+==596665==     in use at exit: 77,201 bytes in 16 blocks
+==596665==   total heap usage: 7,790 allocs, 7,774 frees, 480,753 bytes allocated
+==596665== 
+==596665== 32 bytes in 1 blocks are still reachable in loss record 1 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x411B9F: std::__new_allocator<Channel*>::allocate(unsigned long, void const*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x411B30: __gnu_cxx::__alloc_traits<std::allocator<Channel*>, Channel*>::allocate(std::allocator<Channel*>&, unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4119CF: std::_Vector_base<Channel*, std::allocator<Channel*> >::_M_allocate(unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4115FB: std::vector<Channel*, std::allocator<Channel*> >::_M_realloc_insert(__gnu_cxx::__normal_iterator<Channel**, std::vector<Channel*, std::allocator<Channel*> > >, Channel* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40EA8C: std::vector<Channel*, std::allocator<Channel*> >::push_back(Channel* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40CE3E: Server::createChannel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x406E6F: Server::handleJoin(IrcMessage const&, Client*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x404B62: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 32 bytes in 1 blocks are still reachable in loss record 2 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x411B9F: std::__new_allocator<Channel*>::allocate(unsigned long, void const*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x411B30: __gnu_cxx::__alloc_traits<std::allocator<Channel*>, Channel*>::allocate(std::allocator<Channel*>&, unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4119CF: std::_Vector_base<Channel*, std::allocator<Channel*> >::_M_allocate(unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4115FB: std::vector<Channel*, std::allocator<Channel*> >::_M_realloc_insert(__gnu_cxx::__normal_iterator<Channel**, std::vector<Channel*, std::allocator<Channel*> > >, Channel* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40EA8C: std::vector<Channel*, std::allocator<Channel*> >::push_back(Channel* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x418993: Client::joinChannel(Channel*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x412459: Channel::addClient(Client&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x407901: Server::handleJoin(IrcMessage const&, Client*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x404B62: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 40 bytes in 1 blocks are still reachable in loss record 3 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x4149EC: std::__new_allocator<std::_Rb_tree_node<Client*> >::allocate(unsigned long, void const*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x414980: __gnu_cxx::__alloc_traits<std::allocator<std::_Rb_tree_node<Client*> >, std::_Rb_tree_node<Client*> >::allocate(std::allocator<std::_Rb_tree_node<Client*> >&, unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x414861: std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_M_get_node() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41481C: std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_M_create_node(Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4147EF: std::_Rb_tree_node<Client*>* std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_Alloc_node::operator()<Client*>(Client* const&) const (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4145A6: std::_Rb_tree_iterator<Client*> std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_M_insert_<std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_Alloc_node>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, Client* const&, std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_Alloc_node&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x414279: std::_Rb_tree<Client*, Client*, std::_Identity<Client*>, std::less<Client*>, std::allocator<Client*> >::_M_insert_unique(Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41323C: std::set<Client*, std::less<Client*>, std::allocator<Client*> >::insert(Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4124BB: Channel::addOperator(Client&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41247D: Channel::addClient(Client&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x407901: Server::handleJoin(IrcMessage const&, Client*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 40 bytes in 3 blocks are still reachable in loss record 4 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x41086F: std::__new_allocator<Client*>::allocate(unsigned long, void const*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x410800: __gnu_cxx::__alloc_traits<std::allocator<Client*>, Client*>::allocate(std::allocator<Client*>&, unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41065F: std::_Vector_base<Client*, std::allocator<Client*> >::_M_allocate(unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41022B: std::vector<Client*, std::allocator<Client*> >::_M_realloc_insert(__gnu_cxx::__normal_iterator<Client**, std::vector<Client*, std::allocator<Client*> > >, Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40E38C: std::vector<Client*, std::allocator<Client*> >::push_back(Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41244C: Channel::addClient(Client&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x407901: Server::handleJoin(IrcMessage const&, Client*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x404B62: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 65 bytes in 1 blocks are still reachable in loss record 5 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x49C4FEE: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==596665==    by 0x49C54AC: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==596665==    by 0x417A3C: Client::appendToBuffer(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x4043C6: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 400 bytes in 2 blocks are still reachable in loss record 6 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x403D88: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 816 bytes in 3 blocks are still reachable in loss record 7 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x40CE06: Server::createChannel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x406E6F: Server::handleJoin(IrcMessage const&, Client*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x404B62: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 1,024 bytes in 1 blocks are still reachable in loss record 8 of 11
+==596665==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x4C2AB63: _IO_file_doallocate (filedoalloc.c:101)
+==596665==    by 0x4C39C9F: _IO_doallocbuf (genops.c:347)
+==596665==    by 0x4C38F1F: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:744)
+==596665==    by 0x4C37694: _IO_new_file_xsputn (fileops.c:1243)
+==596665==    by 0x4C37694: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1196)
+==596665==    by 0x4C2BF96: fwrite (iofwrite.c:39)
+==596665==    by 0x49B5B64: std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==596665==    by 0x49B5EBA: std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==596665==    by 0x403B8A: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 1,024 bytes in 1 blocks are still reachable in loss record 9 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x40FF0F: std::__new_allocator<pollfd>::allocate(unsigned long, void const*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40FEA0: __gnu_cxx::__alloc_traits<std::allocator<pollfd>, pollfd>::allocate(std::allocator<pollfd>&, unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40FC7F: std::_Vector_base<pollfd, std::allocator<pollfd> >::_M_allocate(unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40F84B: std::vector<pollfd, std::allocator<pollfd> >::_M_realloc_insert(__gnu_cxx::__normal_iterator<pollfd*, std::vector<pollfd, std::allocator<pollfd> > >, pollfd const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40E2CC: std::vector<pollfd, std::allocator<pollfd> >::push_back(pollfd const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403D79: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 1,024 bytes in 1 blocks are still reachable in loss record 10 of 11
+==596665==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x41086F: std::__new_allocator<Client*>::allocate(unsigned long, void const*) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x410800: __gnu_cxx::__alloc_traits<std::allocator<Client*>, Client*>::allocate(std::allocator<Client*>&, unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41065F: std::_Vector_base<Client*, std::allocator<Client*> >::_M_allocate(unsigned long) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x41022B: std::vector<Client*, std::allocator<Client*> >::_M_realloc_insert(__gnu_cxx::__normal_iterator<Client**, std::vector<Client*, std::allocator<Client*> > >, Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x40E38C: std::vector<Client*, std::allocator<Client*> >::push_back(Client* const&) (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403DD4: Server::start() (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665==    by 0x403837: main (in /home/mbrighi/Downloads/ft_irc (1)/ft_irc/ircserv)
+==596665== 
+==596665== 72,704 bytes in 1 blocks are still reachable in loss record 11 of 11
+==596665==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==596665==    by 0x4923939: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==596665==    by 0x400647D: call_init.part.0 (dl-init.c:70)
+==596665==    by 0x4006567: call_init (dl-init.c:33)
+==596665==    by 0x4006567: _dl_init (dl-init.c:117)
+==596665==    by 0x40202C9: ??? (in /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+==596665==    by 0x2: ???
+==596665==    by 0x1FFF00035E: ???
+==596665==    by 0x1FFF000368: ???
+==596665==    by 0x1FFF00036D: ???
+==596665== 
+==596665== LEAK SUMMARY:
+==596665==    definitely lost: 0 bytes in 0 blocks
+==596665==    indirectly lost: 0 bytes in 0 blocks
+==596665==      possibly lost: 0 bytes in 0 blocks
+==596665==    still reachable: 77,201 bytes in 16 blocks
+==596665==         suppressed: 0 bytes in 0 blocks
+==596665== 
+==596665== For lists of detected and suppressed errors, rerun with: -s
+==596665== ERROR SUMMARY: 127 errors from 1 contexts (suppressed: 0 from 0)
