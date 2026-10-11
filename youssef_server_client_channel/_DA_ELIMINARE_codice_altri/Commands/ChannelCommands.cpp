@@ -39,15 +39,18 @@ static std::vector<std::string> splitComma(const std::string &str)
 /* -------------------------------------------------------------------------------------
 **  isValidChannelName()  [supporto]
 **  Inizia con '#' o '&', ha almeno un carattere dopo, al massimo 50 caratteri, e non
-**  contiene spazi, virgole o il carattere BEL (\a) (regole RFC 2812).
+**  contiene spazi, virgole, BEL (\a), \r, \n o \0 (regole RFC 2812).
+**  Il '\r' conta: con "JOIN #a\r\r\n" senza questo controllo nascerebbe un canale "#a\r",
+**  diverso da "#a" e invisibile a chi lo cerca.
 ** ------------------------------------------------------------------------------------- */
 static bool isValidChannelName(const std::string &name)
 {
+    static const std::string forbidden(" ,\a\r\n\0", 6);  // lunghezza esplicita: include anche '\0'
     if (name.size() < 2 || name.size() > 50)               // troppo corto o troppo lungo
         return false;
     if (name[0] != '#' && name[0] != '&')                  // prefisso obbligatorio
         return false;
-    return name.find_first_of(" ,\a") == std::string::npos; // nessun carattere vietato
+    return name.find_first_of(forbidden) == std::string::npos; // nessun carattere vietato
 }
 
 /* -------------------------------------------------------------------------------------
