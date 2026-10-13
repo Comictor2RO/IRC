@@ -1,68 +1,66 @@
 #include "IrcParser.hpp"
 #include <cctype>
 
-IrcMessage IrcParser::parse (const std::string &raw)
+// Prima:
+//  - non saltava gli spazi a inizio riga;
+//  - una riga con solo il prefisso (":nick") diventava un comando ":nick";
+//  - il comando veniva messo in maiuscolo in due punti diversi;
+//  - non c'era hasTrailing, quindi "TOPIC #c :" (cancella il topic) e "TOPIC #c" (lo legge)
+//    non si potevano distinguere.
+
+static void skipSpaces(const std::string &raw, size_t &pos)
+{
+    while(pos < raw.length() && raw[pos] == ' ')
+        pos++;
+}
+
+IrcMessage IrcParser::parse(const std::string &raw)
 {
     IrcMessage msg;
     size_t pos = 0;
 
+    skipSpaces(raw, pos);
+
     // Extract the prefix
-    if(!raw.empty() && raw[0] == ':')
+    if(pos < raw.length() && raw[pos] == ':')
     {
-        size_t spacePos = raw.find(' ', 1);
-        if(spacePos != std::string::npos)
-        {
-            msg.prefix = raw.substr(1, spacePos - 1);
-            pos = spacePos + 1;
-        }
+        size_t spacePos = raw.find(' ', pos);
+        if(spacePos == std::string::npos)
+            return msg; // only a prefix, no command: empty message
+        msg.prefix = raw.substr(pos + 1, spacePos - pos - 1);
+        pos = spacePos;
+        skipSpaces(raw, pos);
     }
 
-    // Extracts command
+    // Extract the command (uppercase: "join" == "JOIN")
     size_t spacePos = raw.find(' ', pos);
-    if(spacePos != std::string::npos)
-    {
-        msg.command = raw.substr(pos, spacePos - pos);
-        pos = spacePos + 1;
-    }
-    else
-    {
-        msg.command = raw.substr(pos);
-        for (size_t i = 0; i < msg.command.size(); ++i)
-            msg.command[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(msg.command[i])));
-        return msg;
-    }
-
+    if(spacePos == std::string::npos)
+        spacePos = raw.length();
+    msg.command = raw.substr(pos, spacePos - pos);
     for (size_t i = 0; i < msg.command.size(); ++i)
         msg.command[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(msg.command[i])));
+    pos = spacePos;
 
     // Extract params & trailing
     while(pos < raw.length())
     {
-        // Jumps over spaces
-        while(pos < raw.length() && raw[pos] == ' ')
-            pos++;
-
+        skipSpaces(raw, pos);
         if(pos >= raw.length())
             break;
 
-        // Check if there is trailing (starts with ':')
+        // Trailing: everything after ':' (spaces included)
         if(raw[pos] == ':')
         {
             msg.trailing = raw.substr(pos + 1);
+            msg.hasTrailing = true;
             break;
         }
 
         spacePos = raw.find(' ', pos);
-        if(spacePos != std::string::npos)
-        {
-            msg.params.push_back(raw.substr(pos, spacePos - pos));
-            pos = spacePos + 1;
-        }
-        else
-        {
-            msg.params.push_back(raw.substr(pos));
-            break;
-        }
+        if(spacePos == std::string::npos)
+            spacePos = raw.length();
+        msg.params.push_back(raw.substr(pos, spacePos - pos));
+        pos = spacePos;
     }
 
     return msg;
