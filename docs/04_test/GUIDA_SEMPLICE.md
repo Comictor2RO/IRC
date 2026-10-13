@@ -27,7 +27,7 @@ In VSCode: menu **Terminale → Nuovo terminale**, ripetuto 4 volte. Puoi rinomi
 ### T0 — avvia il server
 
 ```bash
-cd ~/Desktop/Github/42_CommonCore/IRC/youssef_server_client_channel/_DA_ELIMINARE_codice_altri
+cd ~/Desktop/Github/42_CommonCore/IRC
 make
 ./ircserv 6667 ciao123
 ```

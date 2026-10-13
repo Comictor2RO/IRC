@@ -221,7 +221,7 @@ dispatch tutti insieme. Divide et impera — dichiara in Server.hpp:
   void dispatchCommand(const IrcMessage &msg, Client *c);   // if/else o map<string, fn-ptr>
   void cleanupClients();               // rimuove i client con shouldDelete() a fine iterazione
 
-  // --- gestione client (da Yousef.md) ---
+  // --- gestione client (da PIANO_CLASSI.md) ---
   void   addClient(int fd);
   void   removeClient(Client *client);
   Client *getClientByFd(int fd);
@@ -229,7 +229,7 @@ dispatch tutti insieme. Divide et impera — dichiara in Server.hpp:
   bool   isNickTaken(const std::string &nick, Client *exclude = NULL) const;
   void   updateNick(Client *c, const std::string &oldNick, const std::string &newNick);
 
-  // --- gestione canali (da Yousef.md) ---
+  // --- gestione canali (da PIANO_CLASSI.md) ---
   Channel *getChannel(const std::string &name);
   Channel *createChannel(const std::string &name);
   void     removeChannel(const std::string &name);

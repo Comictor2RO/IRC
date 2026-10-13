@@ -26,7 +26,7 @@ Il PC ha un IP **privato**. Da internet si vede solo il router, e il router non 
 ## 1. Avviare il server
 
 ```bash
-cd youssef_server_client_channel/_DA_ELIMINARE_codice_altri
+cd ~/Desktop/Github/42_CommonCore/IRC        # root del progetto
 make
 ./ircserv 6667 UnaPasswordRobusta
 ```

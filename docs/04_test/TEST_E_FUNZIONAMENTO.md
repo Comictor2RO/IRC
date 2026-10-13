@@ -1,22 +1,20 @@
-# ft_irc — parte di Youssef: funzionamento e test
+# ft_irc — funzionamento e test
 
-## 0. Struttura della cartella
+## 0. Struttura del progetto
 
 ```
-youssef_server_client_channel/
+IRC/
+├── Makefile                             ← compila tutto in ./ircserv
+├── main.cpp                             ← controllo argomenti + Server::run()
 ├── Server/   Server.hpp  Server.cpp     ← socket, poll(), accept, recv/send, dispatch, pulizia
 ├── Client/   Client.hpp  Client.cpp     ← stato di UNA connessione, buffer in/out, registrazione
 ├── Channel/  Channel.hpp Channel.cpp    ← stato di UN canale: membri, operatori, inviti, modi i/t/k/l
-├── TEST_E_FUNZIONAMENTO.md              ← questo file
-├── CHAT_FUORI_DALLA_RETE.md             ← come collegarsi al server da internet
-└── _DA_ELIMINARE_codice_altri/          ← codice degli altri due, SOLO per compilare e testare
-    ├── Makefile                         ← compila tutto in ./ircserv
-    ├── main.cpp                         ← controllo argomenti + Server::run()
-    ├── IrcParser/                       ← riga di testo → IrcMessage
-    └── Commands/                        ← gli handler: Registration / ChannelCommands / Messaging
+├── IrcParser/                           ← riga di testo → IrcMessage
+├── Commands/                            ← gli handler: Registration / ChannelCommands / Messaging
+└── docs/                                ← guide (questo file è in docs/04_test/)
 ```
 
-**Quando i file verranno integrati nel progetto del gruppo:** si copiano `Server/`, `Client/` e `Channel/`, si cancella `_DA_ELIMINARE_codice_altri/` e nel Makefile del gruppo si aggiungono `-I` per le cartelle (i `.cpp` usano `#include "Client.hpp"` senza percorsi relativi). Gli handler del gruppo devono:
+Regole per chi scrive gli handler in `Commands/`:
 
 - cambiare nick con `updateNick()`, mai con `client->setNickname()`;
 - chiamare `removeChannelIfEmpty()` dopo PART e KICK;
@@ -25,7 +23,7 @@ youssef_server_client_channel/
 ## 1. Compilare e avviare
 
 ```bash
-cd youssef_server_client_channel/_DA_ELIMINARE_codice_altri
+cd ~/Desktop/Github/42_CommonCore/IRC   # root del progetto
 make                       # -Wall -Wextra -Werror -std=c++98, nessun warning
 ./ircserv 6667 pass        # porta 1-65535, password non vuota e senza spazi
 ```

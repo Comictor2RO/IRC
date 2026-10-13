@@ -96,7 +96,7 @@ Esecuzione:       ./ircserv <port> <password>
 
 ### 5.2 Funzioni esterne autorizzate — spiegazione
 
-Il subject elenca una lista chiusa di funzioni di sistema utilizzabili. Ecco cosa fa ciascuna e perché serve (molte già annotate in `docs.md`, qui ampliate):
+Il subject elenca una lista chiusa di funzioni di sistema utilizzabili. Ecco cosa fa ciascuna e perché serve (molte già annotate in `NOTE_SOCKET.md`, qui ampliate):
 
 | Funzione | A cosa serve nel contesto di ft_irc |
 |---|---|
@@ -140,7 +140,7 @@ loop infinito:
         gestisci disconnessioni (POLLHUP/POLLERR) → rimuovi client, chiudi fd, libera memoria
 ```
 
-Questo spiega perché nel vostro `milestones.md` la primissima fase pianificata è "Socket + Poll + Accept": letteralmente nulla si può testare finché questo loop non esiste.
+Questo spiega perché nel vostro `MILESTONES.md` la primissima fase pianificata è "Socket + Poll + Accept": letteralmente nulla si può testare finché questo loop non esiste.
 
 ### 5.4 Perché serve "riassemblare" i pacchetti (buffering)
 
@@ -156,7 +156,7 @@ Qui il comando `command\n` viene inviato **frammentato in tre invii separati** (
 
 Il concetto nuovo da capire: **TCP è uno stream di byte, non un protocollo a messaggi**. Non c'è garanzia che una `recv()` restituisca esattamente un comando IRC completo, né che un comando non venga spezzato su più `recv()` (o che più comandi arrivino in un'unica `recv()`). Per questo:
 
-- Ogni client deve avere un **buffer di ricezione persistente** (accumulo tra una `recv()` e l'altra — è esattamente il campo/metodo `appendToBuffer()` già previsto nella vostra `Client` in `Yousef.md`).
+- Ogni client deve avere un **buffer di ricezione persistente** (accumulo tra una `recv()` e l'altra — è esattamente il campo/metodo `appendToBuffer()` già previsto nella vostra `Client` in `PIANO_CLASSI.md`).
 - Solo quando nel buffer compare un **terminatore di riga completo** (IRC usa `\r\n`, ma per tolleranza spesso si accetta anche solo `\n`) si estrae e processa un comando, lasciando il resto nel buffer per il giro successivo.
 - Bisogna gestire input "sporco": righe vuote, comandi senza `\r`, più comandi accodati nello stesso pacchetto, ecc. Il subject dice esplicitamente: *"Verify every possible error and issue, such as receiving partial data, low bandwidth, etc."*
 
@@ -231,8 +231,8 @@ Nota implicita: se anche solo un requisito mandatory manca o è difettoso, i bon
 
 Guardando i file già presenti nel repository:
 
-- **`docs.md`** copre già bene i concetti base di socket/fcntl visti nella sezione 5.2-5.3 qui sopra.
-- **`Yousef.md`** ha già pianificato correttamente l'architettura a tre classi (`Client`, `Channel`, `Server`) coerente con quanto richiesto dal subject: buffer per client (sezione 5.4), gestione operatori/inviti/ban per canale (sezione 5.6), socket+poll+non-blocking per il server (sezione 5.3).
-- **`milestones.md`** segue esattamente l'ordine logico imposto dalle dipendenze del subject: prima l'infrastruttura di rete (senza la quale non si testa nulla), poi la registrazione (`PASS`/`NICK`/`USER`), poi le funzionalità di canale base (`JOIN`/`PRIVMSG`), poi gestione avanzata (`TOPIC`/`MODE` parziale), infine i comandi da operatore (`KICK`/`INVITE`/`MODE` completo) — che richiedono che tutto il resto sia già solido.
+- **`NOTE_SOCKET.md`** copre già bene i concetti base di socket/fcntl visti nella sezione 5.2-5.3 qui sopra.
+- **`PIANO_CLASSI.md`** ha già pianificato correttamente l'architettura a tre classi (`Client`, `Channel`, `Server`) coerente con quanto richiesto dal subject: buffer per client (sezione 5.4), gestione operatori/inviti/ban per canale (sezione 5.6), socket+poll+non-blocking per il server (sezione 5.3).
+- **`MILESTONES.md`** segue esattamente l'ordine logico imposto dalle dipendenze del subject: prima l'infrastruttura di rete (senza la quale non si testa nulla), poi la registrazione (`PASS`/`NICK`/`USER`), poi le funzionalità di canale base (`JOIN`/`PRIVMSG`), poi gestione avanzata (`TOPIC`/`MODE` parziale), infine i comandi da operatore (`KICK`/`INVITE`/`MODE` completo) — che richiedono che tutto il resto sia già solido.
 
 Questo significa che il piano di lavoro già delineato nel repo è coerente con i requisiti reali del subject; il valore aggiunto di questo documento è avere in un unico posto **il "perché"** dietro ogni vincolo tecnico, utile soprattutto per la fase di difesa/peer-evaluation dove dovrete giustificare le scelte.

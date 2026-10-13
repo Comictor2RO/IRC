@@ -40,9 +40,11 @@ Il progetto insegna la programmazione di rete: socket, `poll()`, I/O non bloccan
 
 Nel nostro codice la divisione è questa:
 
-- **Server** (parte di Youssef): riceve i byte dalla rete e li consegna;
+- **Server**: riceve i byte dalla rete e li consegna;
 - **IrcParser**: trasforma la riga di testo in comando + parametri;
-- **handler**: decidono cosa fare per ogni comando.
+- **handler** (`Commands/`): decidono cosa fare per ogni comando.
+
+Chi segue ogni parte è scritto in [RUOLI.md](../02_organizzazione/RUOLI.md).
 
 ## Cosa sono irssi e HexChat
 
@@ -61,7 +63,7 @@ Con il client vero non scrivi `PRIVMSG #test :ciao`: scrivi solo `ciao` nella fi
 Terminale 1, il nostro server:
 
 ```bash
-cd youssef_server_client_channel/_DA_ELIMINARE_codice_altri && make && ./ircserv 6667 pass
+make && ./ircserv 6667 pass
 ```
 
 Terminale 2, il primo utente:
@@ -98,7 +100,7 @@ Poi clicca **Connetti** e scrivi `/join #test`.
 
 ## E `nc`?
 
-`nc` (netcat) non è un client IRC: è una "connessione nuda". Quello che scrivi arriva così com'è al server, e vedi esattamente cosa risponde. Per questo serve per i test e la valutazione lo usa, ad esempio per il comando spezzato con Ctrl+D. Con `nc` le righe del protocollo le scrivi a mano: `PASS pass`, `NICK alice`, ecc., come in [TEST_E_FUNZIONAMENTO.md](TEST_E_FUNZIONAMENTO.md).
+`nc` (netcat) non è un client IRC: è una "connessione nuda". Quello che scrivi arriva così com'è al server, e vedi esattamente cosa risponde. Per questo serve per i test e la valutazione lo usa, ad esempio per il comando spezzato con Ctrl+D. Con `nc` le righe del protocollo le scrivi a mano: `PASS pass`, `NICK alice`, ecc., come in [TEST_E_FUNZIONAMENTO.md](../04_test/TEST_E_FUNZIONAMENTO.md).
 
 In sintesi:
 
