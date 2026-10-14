@@ -2,10 +2,9 @@
 # Ora ci sono anche i file di Commands/ (gli handler tolti da Server.cpp).
 NAME = ircserv
 
-CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
-# -MMD -MP: generate .d files, so a .cpp is recompiled when a .hpp it includes changes
-DEPFLAGS = -MMD -MP
+CPP = c++
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98
+
 # the sources use #include "X.hpp" without a path
 INCLUDES = -IServer -IClient -IChannel -IIrcParser
 
@@ -23,10 +22,10 @@ DEPS = $(OBJS:.o=.d)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
+	$(CPP) $(CPPFLAGS) -o $(NAME) $(OBJS)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(DEPFLAGS) $(INCLUDES) -c $< -o $@
+	$(CPP) $(CPPFLAGS) $(DEPFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(DEPS)
